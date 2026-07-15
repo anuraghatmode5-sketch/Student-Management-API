@@ -11,7 +11,7 @@ public class CrudSpringBootApplication {
 
 		SpringApplication.run(CrudSpringBootApplication.class, args);
 
-
 	}
 
 }
+
