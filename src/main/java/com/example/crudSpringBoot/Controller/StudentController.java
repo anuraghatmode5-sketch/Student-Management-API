@@ -3,7 +3,11 @@ package com.example.crudSpringBoot.Controller;
 
 import com.example.crudSpringBoot.Entity.Student;
 import com.example.crudSpringBoot.Service.StudentService;
-import org.apache.coyote.Response;
+import com.example.crudSpringBoot.dto.CreateStudentRequestDto;
+import com.example.crudSpringBoot.dto.CreateStudentResponseDto;
+import com.example.crudSpringBoot.dto.UpdateStudentRequestDto;
+import com.example.crudSpringBoot.dto.UpdateStudentResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,63 +24,44 @@ public class StudentController {
               this .studentService = studentService;
        }
 
-       @PostMapping("/create")
-       public ResponseEntity<Student> createStudent(@RequestBody Student student){
-             Student createdStudent =  studentService.createStudent(student);
+       @PostMapping
+       public ResponseEntity<CreateStudentResponseDto> createStudent( @Valid @RequestBody CreateStudentRequestDto createStudentRequestDto){
+           CreateStudentResponseDto createdStudent =  studentService.createStudent(createStudentRequestDto);
              return ResponseEntity
                      .status(HttpStatus.CREATED)
                      .body(createdStudent);
 
        }
 
-       @GetMapping("/get/{id}")
-       public ResponseEntity<Student> getStudent(@PathVariable Long id){
-           Student Studentresp = studentService.getStudent(id);
-
-           if(Studentresp == null){
-               return ResponseEntity.notFound().build();
-           }
+       @GetMapping("/{id}")
+       public ResponseEntity<CreateStudentResponseDto> getStudent(@PathVariable Long id){
+           CreateStudentResponseDto Studentresp = studentService.getStudent(id);
            return ResponseEntity.ok(Studentresp);
        }
 
-       @GetMapping("/getAll")
-       public ResponseEntity<List<Student>> getAllStudents(){
-           List<Student> studentlist = studentService.getAllStudents();
-
-           if(studentlist == null){
-               return ResponseEntity.notFound().build();
-           }
+       @GetMapping
+       public ResponseEntity<List<CreateStudentResponseDto>> getAllStudents(){
+           List<CreateStudentResponseDto> studentlist = studentService.getAllStudents();
            return ResponseEntity.ok(studentlist);
        }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student studentreq){
-        Student Studentresp = studentService.updateStudent(id,studentreq);
-
-        if(Studentresp == null){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(Studentresp);
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateStudentResponseDto> updateStudent(@PathVariable Long id, @RequestBody UpdateStudentRequestDto studentreq){
+        UpdateStudentResponseDto updateStudentResponseDto = studentService.updateStudent(id,studentreq);
+        return ResponseEntity.ok(updateStudentResponseDto);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteStudent(@PathVariable Long id){
-          Boolean isDeleted = studentService.deleteStudent(id);
-
-          if(!isDeleted){
-              return ResponseEntity.notFound().build();
-          }
-          return ResponseEntity.ok("Record Deleted");
+          studentService.deleteStudent(id);
+          return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/delete-soft/{id}")
         public ResponseEntity<String> deleteStudentSoftly(@PathVariable Long id){
-            Boolean isDeleted = studentService.deleteStudentSoftly(id);
+            studentService.deleteStudentSoftly(id);
+            return ResponseEntity.notFound().build();
 
-            if(!isDeleted){
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok("Record Deleted");
         }
 
 
